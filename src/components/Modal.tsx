@@ -1,66 +1,93 @@
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeaderCell,
-    TableRow,
-  
-  } from '@tremor/react';
-  import useUsers from '../services/APIUsers';
+import React, { useState } from 'react';
 
-export default function Modal(){
-    const [user ] = useUsers()
-
-    return(
-        <div>
-            <h1>Modal</h1>
-            <Table className="mt-8">
-          <TableHead>
-            <TableRow className="border-b border-tremor-border dark:border-dark-tremor-border">
-              <TableHeaderCell className="text-tremor-content-strong dark:text-dark-tremor-content-strong">
-                Name
-              </TableHeaderCell>
-              <TableHeaderCell className="text-tremor-content-strong dark:text-dark-tremor-content-strong">
-                Username
-              </TableHeaderCell>
-              <TableHeaderCell className="text-tremor-content-strong dark:text-dark-tremor-content-strong">
-                Email
-              </TableHeaderCell>
-              <TableHeaderCell className="text-tremor-content-strong dark:text-dark-tremor-content-strong">
-                Website
-              </TableHeaderCell>
-              <TableHeaderCell className="text-tremor-content-strong dark:text-dark-tremor-content-strong">
-                Company
-              </TableHeaderCell>
- 
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {(user.map((user: User) => 
-              <TableRow key={user.id}>
-                <TableCell className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
-                  {user.name}
-                </TableCell>
-                <TableCell>{user.username}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.website}</TableCell>
-                <TableCell>{user.company.name}</TableCell>
-
-                <td>
-
-                <button onClick={() => {console.log("hola")}}
-            type="button"
-            className="mt-4 w-full bg-blue-600 text-white hover:text-blue-900 whitespace-nowrap rounded-tremor-small bg-tremor-brand px-4 py-2.5 text-tremor-default font-medium text-tremor-brand-inverted shadow-tremor-input hover:bg-tremor-brand-emphasis dark:bg-dark-tremor-brand dark:text-dark-tremor-brand-inverted dark:shadow-dark-tremor-input dark:hover:bg-dark-tremor-brand-emphasis sm:mt-0 sm:w-fit"
-          >
-            SAVE
-          </button>
-          <button type="button" className="text-red-600 hover:text-red-900" >X</button>
-                </td>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        </div>
-    )
+interface ModalProps {
+    user: User | null;
+    isOpen: boolean;
+    onClose: () => void;
+    onSave: (updatedUser: User) => void;
 }
+
+
+export default function Modal({ user, isOpen, onClose, onSave }: ModalProps) {
+    const [editedUser, setEditedUser] = useState<User | null>(user);
+
+    // Update the local state when the modal is opened with a new user
+    React.useEffect(() => {
+        setEditedUser(user);
+    }, [user]);
+
+    if (!isOpen || !user) return null;
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (editedUser) {
+            setEditedUser({
+                ...editedUser,
+                [e.target.name]: e.target.value,
+            });
+        }
+    };
+
+    const handleSave = () => {
+        if (editedUser) {
+            onSave(editedUser);
+        }
+        onClose();
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div className="bg-white p-6 rounded shadow-lg w-1/3">
+                <h2 className="text-xl font-semibold mb-4">Edit User</h2>
+                <div className="space-y-4">
+                    <input
+                        type="text"
+                        name="name"
+                        value={editedUser?.name || ''}
+                        onChange={handleChange}
+                        className="w-full p-2 border rounded"
+                        placeholder="Name"
+                    />
+                    <input
+                        type="text"
+                        name="username"
+                        value={editedUser?.username || ''}
+                        onChange={handleChange}
+                        className="w-full p-2 border rounded"
+                        placeholder="Username"
+                    />
+                    <input
+                        type="email"
+                        name="email"
+                        value={editedUser?.email || ''}
+                        onChange={handleChange}
+                        className="w-full p-2 border rounded"
+                        placeholder="Email"
+                    />
+                    <input
+                        type="text"
+                        name="website"
+                        value={editedUser?.website || ''}
+                        onChange={handleChange}
+                        className="w-full p-2 border rounded"
+                        placeholder="Website"
+                    />
+                </div>
+                <div className="flex justify-end mt-4">
+                    <button
+                        onClick={onClose}
+                        className="px-4 py-2 bg-gray-500 text-white rounded mr-2"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={handleSave}
+                        className="px-4 py-2 bg-blue-500 text-white rounded"
+                    >
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+

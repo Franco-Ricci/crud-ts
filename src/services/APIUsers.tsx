@@ -21,12 +21,15 @@ export default function useUsers() {
 
 
     useEffect(() => {
-        if (user.length == 0) {
-            getUsers()
+        const storedUsers = localStorage.getItem("ListOfUsers");
+        if (storedUsers!) {
+            // Load from localStorage if available
+            setUser(JSON.parse(storedUsers));
+        } else {
+            // Otherwise fetch from API
+            getUsers();
         }
-        console.log(user)
-        localStorage.setItem("ListOfUsers", JSON.stringify(user))
-    }, [user])
+    }, []);
     function getUsers() {
         fetch(API)
             .then(async (response) => {
@@ -40,6 +43,7 @@ export default function useUsers() {
 
             .then((data) => {
                 setUser(data)
+                localStorage.setItem("ListOfUsers", JSON.stringify(data));
                 console.log(data)
 
             })
@@ -52,5 +56,5 @@ export default function useUsers() {
     }
 
 
-    return [user, error]
+    return [user,setUser, error]
 }
