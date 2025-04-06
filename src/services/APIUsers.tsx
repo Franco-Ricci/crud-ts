@@ -10,7 +10,11 @@ interface User {
         name: string
     }
 }
-export default function useUsers() {
+export default function useUsers(): [User[], React.Dispatch<React.SetStateAction<User[]>>, boolean]
+ {
+    
+
+
 
     const API = 'https://jsonplaceholder.typicode.com/users'
 
@@ -22,13 +26,17 @@ export default function useUsers() {
 
     useEffect(() => {
         const storedUsers = localStorage.getItem("ListOfUsers");
-        if (storedUsers!) {
-            // Load from localStorage if available
-            setUser(JSON.parse(storedUsers));
-        } else {
-            // Otherwise fetch from API
+ 
+        if (storedUsers) {
+            const parsedUsers = JSON.parse(storedUsers);
+            console.log("Parsed length:", parsedUsers.length);
+        
+            if (parsedUsers.length > 0) {
+              setUser(parsedUsers);
+              return
+            }
             getUsers();
-        }
+          } 
     }, []);
     function getUsers() {
         fetch(API)
