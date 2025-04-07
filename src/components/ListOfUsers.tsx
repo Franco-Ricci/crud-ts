@@ -50,6 +50,17 @@ export default function ListOfUsers() {
     setModal(true);
     console.log(editingUser)
   }
+
+  function SaveUser(user: User) {
+    const updatedUsers = users.map((e) => {
+      if (e.id === user.id) {
+        return user;
+      }
+      return e;
+    });
+    setUsers(updatedUsers);
+    setModal(false)
+  }
   return (
     <>
       <div className="sm:flex sm:items-center sm:justify-between sm:space-x-10">
@@ -130,7 +141,7 @@ export default function ListOfUsers() {
               <label htmlFor='email' className='flex items-center gap-3 text-gray-600'>Email
               <input
                 className="w-full border border-gray-300 rounded px-3 py-2"
-                type="text"
+                type="email"
                 value={editingUser.email}
                 onChange={(e) =>
                   setEditingUser({ ...editingUser, email: e.target.value })
@@ -174,7 +185,7 @@ export default function ListOfUsers() {
                 className="px-4 py-2 bg-blue-600 text-white rounded"
                 onClick={() => {
                   
-                  setModal(false);
+                  SaveUser(editingUser);
                 }}
               >
                 Save
