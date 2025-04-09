@@ -75,22 +75,22 @@ export default function ListOfUsers() {
     setUsers(updatedUsers);
     setModalEdit(false)
   }
-  function createUser(user: User){
-
+  function createUser(newUser: User){
+    setModalNewUser(true);   
     if(newUser.name.length > 3 && newUser.email !== ""){
 
       setUsers([...users, newUser]);
-      return // Add new user to users list
+    // Add new user to users list
+    setModalNewUser(false); 
+      setNewUser({
+        id: Date.now(),
+        name: '',
+        username: '',
+        email: '',
+        website: '',
+        company: { name: '' }})
     }
     
-    setModalNewUser(true);   
-    setNewUser({
-      id: Date.now(),
-      name: '',
-      username: '',
-      email: '',
-      website: '',
-      company: { name: '' }})
     }
   return (
     <>
@@ -216,7 +216,12 @@ export default function ListOfUsers() {
                 Cancel
               </button>
               <button
-                className="px-4 py-2 bg-blue-600 text-white rounded"
+                 className={`px-4 py-2 rounded ${
+                  editingUser.name.length <= 3 || !editingUser.email
+                    ? "bg-blue-400 cursor-not-allowed"
+                    : "bg-blue-600 text-white"
+                }`}
+                disabled={editingUser.name.length <= 3 || editingUser.email === ""}
                 onClick={() => {
                   
                   SaveUser(editingUser);
@@ -303,7 +308,12 @@ export default function ListOfUsers() {
            Cancel
          </button>
          <button
-           className="px-4 py-2 bg-blue-600 text-white rounded"
+           className={`px-4 py-2 rounded ${
+            newUser.name.length <= 3 || !newUser.email
+              ? "bg-blue-400 cursor-not-allowed"
+              : "bg-blue-600 text-white"
+          }`}
+           disabled={newUser.name.length <= 3 || newUser.email === ""}
            onClick={() => {
              
              createUser(newUser);
