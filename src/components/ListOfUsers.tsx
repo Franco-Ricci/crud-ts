@@ -23,13 +23,21 @@ interface User {
     name: string
   }
 }
-
+interface FormErrors {
+  name?: string;
+  username?: string;
+  email?: string;
+  website?: string;
+  company?: string;
+}
 
 export default function ListOfUsers() {
 
   const [modalEdit, setModalEdit] = useState<boolean>(false);
   const [users, setUsers, error] = useUsers();
   const [editingUser, setEditingUser] = useState<User | null>(null)
+
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
 
   const [newUser, setNewUser] = useState<User>({
     id: Date.now(),
@@ -77,7 +85,32 @@ export default function ListOfUsers() {
   }
   function createUser(newUser: User){
     setModalNewUser(true);   
-    if(newUser.name.length > 3 && newUser.email !== ""){
+    const errors: FormErrors = {};
+
+    if (!newUser.name || newUser.name.trim().length < 3) {
+      errors.name = "Name must be at least 3 characters long.";
+    }
+  
+    if (!newUser.username) {
+      errors.username = "Username is required.";
+    }
+  
+    if (!newUser.email || !newUser.email.includes("@")) {
+      errors.email = "A valid email is required.";
+    }
+  
+    if (!newUser.website) {
+      errors.website = "Website is required.";
+    }
+  
+    if (!newUser.company.name) {
+      errors.company = "Company name is required.";
+    }
+  
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return; // don't continue if there are validation errors
+    }
 
       setUsers([...users, newUser]);
     // Add new user to users list
@@ -89,8 +122,8 @@ export default function ListOfUsers() {
         email: '',
         website: '',
         company: { name: '' }})
-    }
-    
+  
+        setFormErrors({})
     }
   return (
     <>
@@ -246,6 +279,7 @@ export default function ListOfUsers() {
              onChange={(e) =>
               setNewUser({ ...newUser, name: e.target.value })
              }
+             {formErrors.name && <p className="text-red-500 text-sm">{formErrors.name}</p>}
              placeholder="Name"
              required
            />
