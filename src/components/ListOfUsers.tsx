@@ -39,6 +39,7 @@ export default function ListOfUsers() {
 
   const [formErrors, setFormErrors] = useState<FormErrors>({});
 
+  const [modalNewUser, setModalNewUser] = useState<boolean>(false)
   const [newUser, setNewUser] = useState<User>({
     id: Date.now(),
     name: '',
@@ -48,9 +49,8 @@ export default function ListOfUsers() {
     company: {
       name: '',
     },
-  
+
   })
-  const [modalNewUser, setModalNewUser] = useState<boolean>(false)
 
   // Sync changes to localStorage
   useEffect(() => {
@@ -83,48 +83,49 @@ export default function ListOfUsers() {
     setUsers(updatedUsers);
     setModalEdit(false)
   }
-  function createUser(newUser: User){
-    setModalNewUser(true);   
+  function createUser(newUser: User) {
+
     const errors: FormErrors = {};
 
     if (!newUser.name || newUser.name.trim().length < 3) {
       errors.name = "Name must be at least 3 characters long.";
     }
-  
+
     if (!newUser.username) {
       errors.username = "Username is required.";
     }
-  
-    if (!newUser.email || !newUser.email.includes("@")) {
+
+    if (!newUser.email || !/\S+@\S+\.\S+/.test(newUser.email)) {
       errors.email = "A valid email is required.";
     }
-  
+
     if (!newUser.website) {
       errors.website = "Website is required.";
     }
-  
+
     if (!newUser.company.name) {
       errors.company = "Company name is required.";
     }
-  
+
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       return; // don't continue if there are validation errors
     }
 
-      setUsers([...users, newUser]);
+    setUsers([...users, newUser]);
     // Add new user to users list
-    setModalNewUser(false); 
-      setNewUser({
-        id: Date.now(),
-        name: '',
-        username: '',
-        email: '',
-        website: '',
-        company: { name: '' }})
-  
-        setFormErrors({})
-    }
+    setModalNewUser(false);
+    setNewUser({
+      id: Date.now(),
+      name: '',
+      username: '',
+      email: '',
+      website: '',
+      company: { name: '' }
+    })
+
+    setFormErrors({})
+  }
   return (
     <>
       <div className="sm:flex sm:items-center sm:justify-between sm:space-x-10">
@@ -173,17 +174,17 @@ export default function ListOfUsers() {
 
         </TableBody>
       </Table>
-        <div>
+      <div>
 
-          <button className='bg-blue-700 hover:bg-blue-600 text-white' onClick={() => {createUser(newUser)}} >Add new user</button>
-        </div>
+        <button className='bg-blue-700 hover:bg-blue-600 text-white' onClick={() => { setModalNewUser(true); }} >Add new user</button>
+      </div>
 
       {modalEdit && editingUser && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded shadow-lg w-[400px]">
             <h2 className="text-lg font-semibold mb-4">Edit User</h2>
             <div className="space-y-4">
-              <label htmlFor='name' className='flex items-center gap-3 text-gray-600'>Name
+              <label htmlFor='nameE' className='flex items-center gap-3 text-gray-600'>Name
                 <input
                   className="w-full border border-gray-300 rounded px-3 py-2"
                   type="text"
@@ -192,52 +193,62 @@ export default function ListOfUsers() {
                     setEditingUser({ ...editingUser, name: e.target.value })
                   }
                   placeholder="Name"
+                  required
+                  id='nameE'
                 />
               </label>
-              <label htmlFor='name' className='flex items-center gap-3 text-gray-600'>Username
-              <input
-                className="w-full border border-gray-300 rounded px-3 py-2"
-                type="text"
-                value={editingUser.username}
-                onChange={(e) =>
-                  setEditingUser({ ...editingUser, username: e.target.value })
-                }
-                placeholder="username"
-              />
+              <label htmlFor='usernameE' className='flex items-center gap-3 text-gray-600'>Username
+                <input
+                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  type="text"
+                  value={editingUser.username}
+                  onChange={(e) =>
+                    setEditingUser({ ...editingUser, username: e.target.value })
+                  }
+                  placeholder="username"
+                  required
+                  id="usernameE"
+                />
               </label>
-              <label htmlFor='email' className='flex items-center gap-3 text-gray-600'>Email
-              <input
-                className="w-full border border-gray-300 rounded px-3 py-2"
-                type="email"
-                value={editingUser.email}
-                onChange={(e) =>
-                  setEditingUser({ ...editingUser, email: e.target.value })
-                }
-                placeholder="email"
-              />
+              <label htmlFor='emailE' className='flex items-center gap-3 text-gray-600'>Email
+                <input
+                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  type="email"
+                  value={editingUser.email}
+                  onChange={(e) =>
+                    setEditingUser({ ...editingUser, email: e.target.value })
+                  }
+                  placeholder="email"
+                  required
+                  id="emailE"
+                />
               </label>
-              <label htmlFor='website' className='flex items-center gap-3 text-gray-600'>Website
-              <input
-                className="w-full border border-gray-300 rounded px-3 py-2"
-                type="text"
-                value={editingUser.website}
-                onChange={(e) =>
-                  setEditingUser({ ...editingUser, website: e.target.value })
-                }
-                placeholder="website"
-              />
-               </label>
-               <label htmlFor='Company' className='flex items-center gap-3 text-gray-600'>Company
-              <input
-                className="w-full border border-gray-300 rounded px-3 py-2"
-                type="text"
-                value={editingUser.company.name}
-                onChange={(e) =>
-                  setEditingUser({ ...editingUser, company: { ...editingUser.company, name: e.target.value } })
-                }
-                placeholder="Company"
-              />
-               </label>
+              <label htmlFor='websiteE' className='flex items-center gap-3 text-gray-600'>Website
+                <input
+                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  type="text"
+                  value={editingUser.website}
+                  onChange={(e) =>
+                    setEditingUser({ ...editingUser, website: e.target.value })
+                  }
+                  placeholder="website"
+                  required
+                  id="websiteE"
+                />
+              </label>
+              <label htmlFor='CompanyE' className='flex items-center gap-3 text-gray-600'>Company
+                <input
+                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  type="text"
+                  value={editingUser.company.name}
+                  onChange={(e) =>
+                    setEditingUser({ ...editingUser, company: { ...editingUser.company, name: e.target.value } })
+                  }
+                  placeholder="Company"
+                  required
+                  id="CompanyE"
+                />
+              </label>
 
             </div>
 
@@ -249,14 +260,13 @@ export default function ListOfUsers() {
                 Cancel
               </button>
               <button
-                 className={`px-4 py-2 rounded ${
-                  editingUser.name.length <= 3 || !editingUser.email
-                    ? "bg-blue-400 cursor-not-allowed"
-                    : "bg-blue-600 text-white"
-                }`}
-                disabled={editingUser.name.length <= 3 || editingUser.email === ""}
+                className={`px-4 py-2 rounded ${editingUser.name.length <= 3 || /\S+@\S+\.\S+/.test(editingUser.email) === false
+                  ? "bg-blue-400 cursor-not-allowed"
+                  : "bg-blue-600 text-white"
+                  }`}
+                disabled={editingUser.name.length <= 3 || /\S+@\S+\.\S+/.test(editingUser.email) === false}
                 onClick={() => {
-                  
+
                   SaveUser(editingUser);
                 }}
               >
@@ -266,98 +276,113 @@ export default function ListOfUsers() {
           </div>
         </div>
       )}
-      {modalNewUser && 
-     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-     <div className="bg-white p-6 rounded shadow-lg w-[400px]">
-       <h2 className="text-lg font-semibold mb-4">Edit User</h2>
-       <div className="space-y-4">
-         <label htmlFor='name' className='flex items-center gap-3 text-gray-600'>Name
-           <input
-             className="w-full border border-gray-300 rounded px-3 py-2"
-             type="text"
-             value={newUser?.name}
-             onChange={(e) =>
-              setNewUser({ ...newUser, name: e.target.value })
-             }
-             {formErrors.name && <p className="text-red-500 text-sm">{formErrors.name}</p>}
-             placeholder="Name"
-             required
-           />
-         </label>
-         <label htmlFor='name' className='flex items-center gap-3 text-gray-600'>Username
-         <input
-           className="w-full border border-gray-300 rounded px-3 py-2"
-           type="text"
-           value={newUser?.username}
-           onChange={(e) =>
-            setNewUser({ ...newUser, username: e.target.value })
-           }
-           placeholder="username"
-         />
-         </label>
-         <label htmlFor='email' className='flex items-center gap-3 text-gray-600'>Email
-         <input
-           className="w-full border border-gray-300 rounded px-3 py-2"
-           type="email"
-           value={newUser?.email}
-           onChange={(e) =>
-            setNewUser({ ...newUser, email: e.target.value })
-           }
-           placeholder="email"
-           required
-         />
-         </label>
-         <label htmlFor='website' className='flex items-center gap-3 text-gray-600'>Website
-         <input
-           className="w-full border border-gray-300 rounded px-3 py-2"
-           type="text"
-           value={newUser?.website}
-           onChange={(e) =>
-            setNewUser({ ...newUser, website: e.target.value })
-           }
-           placeholder="website"
-           required
-         />
-          </label>
-          <label htmlFor='Company' className='flex items-center gap-3 text-gray-600'>Company
-         <input
-           className="w-full border border-gray-300 rounded px-3 py-2"
-           type="text"
-           value={newUser?.company.name}
-           onChange={(e) =>
-            setNewUser({ ...newUser, company: { ...newUser.company, name: e.target.value } })
-           }
-           placeholder="Company"
-           required
-         />
-          </label>
+      {modalNewUser &&
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-[400px]">
+            <h2 className="text-lg font-semibold mb-4">Edit User</h2>
+            <div className="space-y-4">
+              <label htmlFor='name' className='flex items-center gap-3 text-gray-600'>Name
+                <input
+                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  type="text"
+                  value={newUser?.name}
+                  onChange={(e) => {
 
-       </div>
 
-       <div className="mt-4 flex justify-end">
-         <button
-           className="px-4 py-2 bg-gray-300 rounded mr-2"
-           onClick={() => setModalNewUser(false)}
-         >
-           Cancel
-         </button>
-         <button
-           className={`px-4 py-2 rounded ${
-            newUser.name.length <= 3 || !newUser.email
-              ? "bg-blue-400 cursor-not-allowed"
-              : "bg-blue-600 text-white"
-          }`}
-           disabled={newUser.name.length <= 3 || newUser.email === ""}
-           onClick={() => {
-             
-             createUser(newUser);
-           }}
-         >
-           Save
-         </button>
-       </div>
-     </div>
-   </div>
+                    setNewUser({ ...newUser, name: e.target.value })
+
+
+                  }
+                  }
+                  id='name'
+                  placeholder="Name"
+                  required
+                />
+                {formErrors?.name && <p className="text-red-500 text-sm">{formErrors.name}</p>}
+              </label>
+              <label htmlFor='name' className='flex items-center gap-3 text-gray-600'>Username
+                <input
+                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  type="text"
+                  value={newUser?.username}
+                  onChange={(e) => {
+                    setNewUser({ ...newUser, username: e.target.value })
+                  }
+                  }
+                  id='username'
+                  placeholder="username"
+                  required
+                />
+                {formErrors?.username && <p className="text-red-500 text-sm">{formErrors.username}</p>}
+              </label>
+              <label htmlFor='email' className='flex items-center gap-3 text-gray-600'>Email
+                <input
+                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  type="email"
+                  value={newUser?.email}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, email: e.target.value })
+                  }
+                  id='email'
+                  placeholder="email"
+                  required
+                />
+                {formErrors?.email && <p className="text-red-500 text-sm">{formErrors.email}</p>}
+              </label>
+              <label htmlFor='website' className='flex items-center gap-3 text-gray-600'>Website
+                <input
+                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  type="text"
+                  value={newUser?.website}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, website: e.target.value })
+                  }
+                  id='website'
+                  placeholder="website"
+                  required
+                />
+                {formErrors?.website && <p className="text-red-500 text-sm">{formErrors.website}</p>}
+              </label>
+              <label htmlFor='Company' className='flex items-center gap-3 text-gray-600'>Company
+                <input
+                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  type="text"
+                  value={newUser?.company.name}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, company: { ...newUser.company, name: e.target.value } })
+                  }
+                  id='Company'
+                  placeholder="Company"
+                  required
+                />
+                {formErrors?.company && <p className="text-red-500 text-sm">{formErrors.company}</p>}
+              </label>
+
+            </div>
+
+            <div className="mt-4 flex justify-end">
+              <button
+                className="px-4 py-2 bg-gray-300 rounded mr-2"
+                onClick={() => setModalNewUser(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className={`px-4 py-2 rounded ${newUser.name.length <= 3 || /\S+@\S+\.\S+/.test(newUser.email) === false
+                  ? "bg-blue-400 cursor-not-allowed"
+                  : "bg-blue-600 text-white"
+                  }`}
+                disabled={newUser.name.length <= 3 || /\S+@\S+\.\S+/.test(newUser.email) === false}
+                onClick={() => {
+
+                  createUser(newUser);
+                }}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
       }
     </>
   );
