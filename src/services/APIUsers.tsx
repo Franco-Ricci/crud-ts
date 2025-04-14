@@ -10,7 +10,7 @@ interface User {
         name: string
     }
 }
-export default function useUsers(): [User[], React.Dispatch<React.SetStateAction<User[]>>, boolean]
+export default function useUsers(): [User[], React.Dispatch<React.SetStateAction<User[]>>, boolean, boolean]
  {
     
 
@@ -20,6 +20,7 @@ export default function useUsers(): [User[], React.Dispatch<React.SetStateAction
 
     const [user, setUser] = useState<User[]>([])
     const [error, setError] = useState(false)
+    const [loading, setLoading] = useState(true);
 
 
 
@@ -33,6 +34,7 @@ export default function useUsers(): [User[], React.Dispatch<React.SetStateAction
         
             if (parsedUsers.length > 0) {
               setUser(parsedUsers);
+              setLoading(false)
               return
             }
             getUsers();
@@ -60,9 +62,14 @@ export default function useUsers(): [User[], React.Dispatch<React.SetStateAction
                 console.error("Error fetching data: ", error);
                 setError(true)
             })
+            .finally(() => {
 
+                setLoading(false)
+            })
+          
+            
     }
 
 
-    return [user,setUser, error]
+    return [user,setUser, error, loading]
 }

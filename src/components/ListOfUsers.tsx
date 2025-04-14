@@ -19,7 +19,7 @@ import { ModalNewUser } from './ModalNewUser';
 export default function ListOfUsers() {
 
   const [modalEdit, setModalEdit] = useState<boolean>(false);
-  const [users, setUsers, error] = useUsers();
+  const [users, setUsers, error, loading] = useUsers();
   const [editingUser, setEditingUser] = useState<User | null>(null)
 
 
@@ -70,7 +70,7 @@ export default function ListOfUsers() {
   }
   return (
     <>
-      <div className="sm:flex sm:items-center sm:justify-between sm:space-x-10">
+      <div className="sm:flex sm:items-center sm:justify-center sm:space-x-10">
         <div>
           <h3 className="font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
             Workspaces
@@ -82,7 +82,10 @@ export default function ListOfUsers() {
 
       </div>
 
-
+{loading ? <p className='text-blue-700 text-2xl font-bold'>Loading...</p> :
+      error ? <p className='text-blue-700 text-2xl font-bold'>Error fetching data, try again</p> 
+      : 
+      <div>
       <Table className="mt-8">
         <TableHead>
           <TableRow className="border-b border-tremor-border dark:border-dark-tremor-border">
@@ -120,7 +123,8 @@ export default function ListOfUsers() {
 
         <button className='bg-blue-700 hover:bg-blue-600 text-white' onClick={() => { setModalNewUser(true); }} >Add new user</button>
       </div>
-
+      </div>
+    }
       {modalEdit && editingUser && (
         <ModalEdit
           editingUser={editingUser}
