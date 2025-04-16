@@ -85,8 +85,8 @@ export default function ListOfUsers() {
 {loading ? <p className='text-blue-700 text-2xl font-bold'>Loading...</p> :
       error ? <p className='text-blue-700 text-2xl font-bold'>Error fetching data, try again</p> 
       : 
-      <div>
-      <Table className="mt-8">
+      <div className='overflow-x-auto'>
+      <Table className="mt-8 ">
         <TableHead>
           <TableRow className="border-b border-tremor-border dark:border-dark-tremor-border">
             <TableHeaderCell>Name</TableHeaderCell>
@@ -106,12 +106,13 @@ export default function ListOfUsers() {
               <TableCell>{user.website}</TableCell>
               <TableCell>{user.company?.name}</TableCell>
               <TableCell>
-                <button className="text-blue-600" onClick={() => EditUser(user)}>E</button>
+                <button className="text-blue-600" onClick={() => EditUser(user)}><svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" > <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /> <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" /> <path d="M16 5l3 3" /> </svg> </button>
                 <button
                   className="text-red-600 ml-2"
                   onClick={() => removeUser(user.id)}
                 >
-                  X
+                  <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" > <path d="M18 6l-12 12" /> <path d="M6 6l12 12" /> </svg> 
+
                 </button>
               </TableCell>
             </TableRow>
